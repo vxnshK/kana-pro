@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import kanaData from "../../../kana.json";
 import Navbar from "../../components/Navbar";
@@ -18,7 +18,7 @@ interface Kana {
   type: string;
 }
 
-export default function Practice() {
+function PracticeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode") || "romaji-to-kana";
@@ -355,4 +355,10 @@ export default function Practice() {
       </Dialog>
     </div>
   );
+}
+
+export default function Practice() {
+  return <Suspense fallback={<h1>loading...</h1>}>
+    <PracticeContent />
+  </Suspense>
 }
