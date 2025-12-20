@@ -18,6 +18,11 @@ export default function Navbar() {
                 Home
               </Link>
             </Button>
+            <Button variant="ghost" asChild>
+              <Link href="/chart">
+                Chart
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
