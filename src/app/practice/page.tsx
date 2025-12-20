@@ -91,8 +91,15 @@ function PracticeContent() {
   }, [completedKanas.size, filteredKanaData.length]);
 
   const getRandomKana = () => {
-    const randomIndex = Math.floor(Math.random() * filteredKanaData.length);
-    return filteredKanaData[randomIndex];
+    // Filter out already completed kanas
+    const remainingKanas = filteredKanaData.filter(
+      kana => !completedKanas.has(`${kana.kana}-${kana.romaji}`)
+    );
+
+    // If all kanas are completed, allow selecting from all kanas
+    const pool = remainingKanas.length > 0 ? remainingKanas : filteredKanaData;
+    const randomIndex = Math.floor(Math.random() * pool.length);
+    return pool[randomIndex];
   };
 
   const formatTime = (seconds: number) => {
