@@ -5,6 +5,8 @@ import kanaData from "../../../kana.json";
 import Navbar from "../../components/Navbar";
 import WavePattern from "../../components/WavePattern";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Volume2 } from "lucide-react";
+import { useSpeechSynthesis } from "@/hooks/useSpeechSynthesis";
 
 interface Kana {
   kana: string;
@@ -14,6 +16,7 @@ interface Kana {
 
 export default function Chart() {
   const [hoveredKana, setHoveredKana] = useState<{ kana: Kana; x: number; y: number } | null>(null);
+  const { speak, isSpeaking, isSupported } = useSpeechSynthesis();
 
   // Organize kana into a grid structure for Hiragana chart
   const createKanaGrid = () => {
@@ -99,7 +102,7 @@ export default function Chart() {
                             : 'bg-transparent'
                         }
                         ${cell ? 'border-2 border-gray-200 dark:border-gray-700' : ''}
-                        rounded-lg p-4 flex flex-col items-center justify-center min-h-[80px] min-w-[80px] relative
+                        rounded-lg p-4 flex flex-col items-center justify-center min-h-[80px] min-w-[80px] relative group
                       `}
                       onMouseEnter={(e) => {
                         if (kanaInfo) {
@@ -112,10 +115,23 @@ export default function Chart() {
                         }
                       }}
                       onMouseLeave={() => setHoveredKana(null)}
+                      onClick={() => {
+                        if (kanaInfo && isSupported) {
+                          speak(kanaInfo.kana);
+                        }
+                      }}
                     >
                       <span className={`${isHeader ? 'text-sm' : 'text-3xl'} font-bold`}>
                         {cell}
                       </span>
+                      <span className="text-sm font-bold">
+                        {kanaInfo?.romaji}
+                      </span>
+                      {!isHeader && kanaInfo && isSupported && (
+                        <Volume2
+                          className="w-4 h-4 text-[#1e3a5f] dark:text-[#6a9bd8] opacity-0 group-hover:opacity-100 transition-opacity"
+                        />
+                      )}
                     </div>
                   );
                 })
@@ -166,14 +182,18 @@ export default function Chart() {
         </div>
 
         {/* Floating Hover Card */}
-        {hoveredKana && (
+        {/* {hoveredKana && (
           <div
-            className="fixed pointer-events-none z-50 transition-opacity duration-200"
+            className="fixed pointer-events-auto z-50 transition-opacity duration-200"
             style={{
               left: `${hoveredKana.x}px`,
               top: `${hoveredKana.y}px`,
               transform: 'translate(-50%, -100%)'
             }}
+            onMouseEnter={() => {
+              // Keep the hover card visible when hovering over it
+            }}
+            onMouseLeave={() => setHoveredKana(null)}
           >
             <div className="bg-white dark:bg-gray-800 border-2 border-[#1e3a5f] dark:border-[#6a9bd8] rounded-lg shadow-2xl p-4 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95">
               <div className="text-center">
@@ -184,7 +204,7 @@ export default function Chart() {
               </div>
             </div>
           </div>
-        )}
+        )} */}
       </main>
     </div>
   );
